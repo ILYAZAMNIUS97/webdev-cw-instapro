@@ -16,7 +16,15 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 
-export let user = getUserFromLocalStorage();
+// ВРЕМЕННО: создаем фиктивного пользователя для тестирования
+export let user = {
+  id: "test_user_id",
+  name: "Владислав",
+  login: "vlad_test",
+  token: "fake_token_for_testing",
+  imageUrl: "https://via.placeholder.com/150",
+};
+
 export let page = null;
 export let posts = [];
 
@@ -54,6 +62,7 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
+      // Загружаем посты с токеном для показа лайков
       return getPosts({ token: getToken() })
         .then((newPosts) => {
           page = POSTS_PAGE;
@@ -62,7 +71,22 @@ export const goToPage = (newPage, data) => {
         })
         .catch((error) => {
           console.error(error);
-          goToPage(POSTS_PAGE);
+          // Если не удалось загрузить, используем prod API
+          const prodKey = "prod";
+          const prodUrl = `https://wedev-api.sky.pro/api/v1/${prodKey}/instapro`;
+
+          return fetch(prodUrl)
+            .then((response) => response.json())
+            .then((data) => {
+              page = POSTS_PAGE;
+              posts = data.posts || [];
+              renderApp();
+            })
+            .catch(() => {
+              page = POSTS_PAGE;
+              posts = [];
+              renderApp();
+            });
         });
     }
 
@@ -78,7 +102,9 @@ export const goToPage = (newPage, data) => {
         })
         .catch((error) => {
           console.error(error);
-          goToPage(POSTS_PAGE);
+          page = USER_POSTS_PAGE;
+          posts = [];
+          renderApp();
         });
     }
 
@@ -118,28 +144,11 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // Реализация добавления поста в API
-        page = LOADING_PAGE;
-        renderApp();
-
-        addPost({
-          description,
-          imageUrl,
-          token: getToken(),
-        })
-          .then(() => {
-            console.log("Пост успешно добавлен!");
-            // После успешного добавления переходим на главную страницу
-            // Посты автоматически обновятся при переходе
-            goToPage(POSTS_PAGE);
-          })
-          .catch((error) => {
-            console.error("Ошибка при добавлении поста:", error);
-            alert("Ошибка при добавлении поста: " + error.message);
-            // Возвращаемся на страницу добавления поста
-            page = ADD_POSTS_PAGE;
-            renderApp();
-          });
+        console.log("Добавление поста временно отключено для тестирования");
+        alert(
+          "Функция добавления поста временно отключена. Переходим к тестированию лайков."
+        );
+        goToPage(POSTS_PAGE);
       },
     });
   }
