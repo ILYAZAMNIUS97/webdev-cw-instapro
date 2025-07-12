@@ -23,8 +23,7 @@ export let user = {
   login: "ilya_zamnius_browser_1752325978096",
   token:
     "boc0dgasakdkasc4c8bod0csakawcoccd8csb8coak5g645w5k5o5k5w6c64685c6c606gc4dgcgascscsd8cccob45g5k5o6g38g3cc3e83ek",
-  imageUrl:
-    "https://storage.yandexcloud.net/skypro-webdev-homework-bucket/1752327846924-%25C3%2590%25C2%2594%25C3%2590%25C2%25BB%25C3%2591%25C2%258F%2520%25C3%2590%25C2%25BA%25C3%2590%25C2%25B2%25C3%2590%25C2%25BE%25C3%2591%25C2%2580%25C3%2590%25C2%25BA%25C3%2590%25C2%25B0.jpg",
+  imageUrl: "https://avatars.githubusercontent.com/u/1?v=4",
 };
 
 export let page = null;
