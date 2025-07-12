@@ -16,13 +16,15 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 
-// ВРЕМЕННО: создаем фиктивного пользователя для тестирования
+// Используем реальные данные полученные через консоль
 export let user = {
-  id: "test_user_id",
-  name: "Владислав",
-  login: "vlad_test",
-  token: "fake_token_for_testing",
-  imageUrl: "https://via.placeholder.com/150",
+  id: "ilya_zamnius_browser_1752325978096", // Используем логин как ID
+  name: "Илья",
+  login: "ilya_zamnius_browser_1752325978096",
+  token:
+    "boc0dgasakdkasc4c8bod0csakawcoccd8csb8coak5g645w5k5o5k5w6c64685c6c606gc4dgcgascscsd8cccob45g5k5o6g38g3cc3e83ek",
+  imageUrl:
+    "https://storage.yandexcloud.net/skypro-webdev-homework-bucket/1752327846924-%25C3%2590%25C2%2594%25C3%2590%25C2%25BB%25C3%2591%25C2%258F%2520%25C3%2590%25C2%25BA%25C3%2590%25C2%25B2%25C3%2590%25C2%25BE%25C3%2591%25C2%2580%25C3%2590%25C2%25BA%25C3%2590%25C2%25B0.jpg",
 };
 
 export let page = null;
@@ -144,11 +146,28 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        console.log("Добавление поста временно отключено для тестирования");
-        alert(
-          "Функция добавления поста временно отключена. Переходим к тестированию лайков."
-        );
-        goToPage(POSTS_PAGE);
+        // Реализация добавления поста в API
+        page = LOADING_PAGE;
+        renderApp();
+
+        addPost({
+          description,
+          imageUrl,
+          token: getToken(),
+        })
+          .then(() => {
+            console.log("Пост успешно добавлен!");
+            // После успешного добавления переходим на главную страницу
+            // Посты автоматически обновятся при переходе
+            return goToPage(POSTS_PAGE);
+          })
+          .catch((error) => {
+            console.error("Ошибка при добавлении поста:", error);
+            alert("Ошибка при добавлении поста: " + error.message);
+            // Возвращаемся на страницу добавления поста
+            page = ADD_POSTS_PAGE;
+            renderApp();
+          });
       },
     });
   }
