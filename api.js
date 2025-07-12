@@ -1,6 +1,6 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
-const personalKey = "prod";
+const personalKey = "student_zamnius_2025";
 const baseHost = "https://wedev-api.sky.pro"; // Обновленный URL согласно документации
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
@@ -146,7 +146,7 @@ export function uploadImage({ file }) {
   const data = new FormData();
   data.append("file", file);
 
-  return fetch(baseHost + "/api/upload/image", {
+  return fetch("https://wedev-api.sky.pro/api/upload/image", {
     method: "POST",
     body: data,
   }).then((response) => {

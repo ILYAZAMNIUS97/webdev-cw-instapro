@@ -42,7 +42,7 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     // Рендерим компонент загрузки изображения
     renderUploadImageComponent({
       element: document.querySelector(".upload-image-container"),
-      onImageUploaded: (newImageUrl) => {
+      onImageUrlChange: (newImageUrl) => {
         imageUrl = newImageUrl;
         console.log("Изображение загружено:", imageUrl);
       },

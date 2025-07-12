@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, addPost, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -67,11 +67,19 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      // @@TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
-      page = USER_POSTS_PAGE;
-      posts = [];
-      return renderApp();
+      page = LOADING_PAGE;
+      renderApp();
+
+      return getUserPosts({ userId: data.userId, token: getToken() })
+        .then((userPosts) => {
+          page = USER_POSTS_PAGE;
+          posts = userPosts;
+          renderApp();
+        })
+        .catch((error) => {
+          console.error(error);
+          goToPage(POSTS_PAGE);
+        });
     }
 
     page = newPage;
@@ -110,9 +118,28 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // @TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
-        goToPage(POSTS_PAGE);
+        // Реализация добавления поста в API
+        page = LOADING_PAGE;
+        renderApp();
+
+        addPost({
+          description,
+          imageUrl,
+          token: getToken(),
+        })
+          .then(() => {
+            console.log("Пост успешно добавлен!");
+            // После успешного добавления переходим на главную страницу
+            // Посты автоматически обновятся при переходе
+            goToPage(POSTS_PAGE);
+          })
+          .catch((error) => {
+            console.error("Ошибка при добавлении поста:", error);
+            alert("Ошибка при добавлении поста: " + error.message);
+            // Возвращаемся на страницу добавления поста
+            page = ADD_POSTS_PAGE;
+            renderApp();
+          });
       },
     });
   }
@@ -124,9 +151,9 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-    // @TODO: реализовать страницу с фотографиями отдельного пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    return renderPostsPageComponent({
+      appEl,
+    });
   }
 };
 
