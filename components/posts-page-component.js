@@ -8,9 +8,63 @@ export function renderPostsPageComponent({ appEl }) {
   console.log("Актуальный список постов:", posts);
 
   /**
-   * @TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
+   * Функция для красивого форматирования даты
+   * Использует date-fns для отображения времени в формате "5 минут назад"
    */
+  function formatDate(date) {
+    try {
+      // Проверяем, доступна ли библиотека date-fns
+      if (typeof window.dateFns !== 'undefined') {
+        return window.dateFns.formatDistanceToNow(new Date(date), {
+          addSuffix: true,
+          locale: {
+            formatDistance: (token, count) => {
+              const options = {
+                lessThanXSeconds: 'меньше {{count}} секунд',
+                xSeconds: '{{count}} секунд',
+                halfAMinute: 'полминуты',
+                lessThanXMinutes: 'меньше {{count}} минут',
+                xMinutes: '{{count}} минут',
+                aboutXHours: 'около {{count}} часов',
+                xHours: '{{count}} часов',
+                xDays: '{{count}} дней',
+                aboutXMonths: 'около {{count}} месяцев',
+                xMonths: '{{count}} месяцев',
+                aboutXYears: 'около {{count}} лет',
+                xYears: '{{count}} лет',
+                overXYears: 'более {{count}} лет',
+                almostXYears: 'почти {{count}} лет'
+              };
+              return options[token].replace('{{count}}', count);
+            }
+          }
+        });
+      } else {
+        // Fallback на собственную реализацию, если библиотека не загружена
+        const now = new Date();
+        const postDate = new Date(date);
+        const diffInMs = now - postDate;
+        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+        if (diffInMinutes < 1) return 'только что';
+        if (diffInMinutes < 60) return `${diffInMinutes} минут назад`;
+        if (diffInHours < 24) return `${diffInHours} часов назад`;
+        if (diffInDays < 7) return `${diffInDays} дней назад`;
+        
+        return postDate.toLocaleDateString("ru-RU", {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+    } catch (error) {
+      console.warn('Ошибка форматирования даты:', error);
+      // Fallback на простое форматирование
+      return new Date(date).toLocaleDateString("ru-RU");
+    }
+  }
 
   // Функция для генерации HTML одного поста
   function renderPost(post) {
@@ -45,7 +99,7 @@ export function renderPostsPageComponent({ appEl }) {
           ${post.description}
         </p>
         <p class="post-date">
-          ${new Date(post.createdAt).toLocaleDateString("ru-RU")}
+          ${formatDate(post.createdAt)}
         </p>
       </li>
     `;
@@ -215,4 +269,30 @@ export function renderPostsPageComponent({ appEl }) {
   postElements.forEach((post, index) => {
     post.style.animationDelay = `${index * 0.1}s`;
   });
+
+  // Функция для обновления дат в реальном времени
+  function updateDates() {
+    const dateElements = document.querySelectorAll('.post-date');
+    dateElements.forEach((dateEl, index) => {
+      const post = posts[index];
+      if (post) {
+        const newFormattedDate = formatDate(post.createdAt);
+        if (dateEl.textContent !== newFormattedDate) {
+          // Добавляем анимацию обновления
+          dateEl.classList.add('updating');
+          dateEl.textContent = newFormattedDate;
+          
+          setTimeout(() => {
+            dateEl.classList.remove('updating');
+          }, 300);
+        }
+      }
+    });
+  }
+
+  // Обновляем даты каждую минуту
+  setInterval(updateDates, 60000);
+  
+  // Также обновляем даты при загрузке страницы
+  setTimeout(updateDates, 1000);
 }

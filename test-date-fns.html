@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Тест date-fns</title>
+    <script src="https://unpkg.com/date-fns@2.30.0/index.min.js"></script>
+</head>
+<body>
+    <h1>Тест форматирования дат</h1>
+    <div id="test-results"></div>
+
+    <script>
+        // Тестируем работу date-fns
+        const testDates = [
+            new Date(Date.now() - 30000), // 30 секунд назад
+            new Date(Date.now() - 300000), // 5 минут назад
+            new Date(Date.now() - 3600000), // 1 час назад
+            new Date(Date.now() - 86400000), // 1 день назад
+            new Date(Date.now() - 604800000), // 1 неделя назад
+        ];
+
+        const results = testDates.map(date => {
+            try {
+                const formatted = window.dateFns.formatDistanceToNow(date, {
+                    addSuffix: true,
+                    locale: {
+                        formatDistance: (token, count) => {
+                            const options = {
+                                lessThanXSeconds: 'меньше {{count}} секунд',
+                                xSeconds: '{{count}} секунд',
+                                halfAMinute: 'полминуты',
+                                lessThanXMinutes: 'меньше {{count}} минут',
+                                xMinutes: '{{count}} минут',
+                                aboutXHours: 'около {{count}} часов',
+                                xHours: '{{count}} часов',
+                                xDays: '{{count}} дней',
+                                aboutXMonths: 'около {{count}} месяцев',
+                                xMonths: '{{count}} месяцев',
+                                aboutXYears: 'около {{count}} лет',
+                                xYears: '{{count}} лет',
+                                overXYears: 'более {{count}} лет',
+                                almostXYears: 'почти {{count}} лет'
+                            };
+                            return options[token].replace('{{count}}', count);
+                        }
+                    }
+                });
+                return `${date.toLocaleString()} → ${formatted}`;
+            } catch (error) {
+                return `${date.toLocaleString()} → Ошибка: ${error.message}`;
+            }
+        });
+
+        document.getElementById('test-results').innerHTML = results.map(result => `<p>${result}</p>`).join('');
+    </script>
+</body>
+</html> 

@@ -246,6 +246,34 @@
 
 .post-date {
   color: #8a8a8a;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.post-date:hover {
+  color: #565eef;
+  transform: scale(1.05);
+}
+
+/* Анимация для обновления дат в реальном времени */
+.post-date.updating {
+  animation: dateUpdate 0.3s ease-in-out;
+}
+
+@keyframes dateUpdate {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .post + .post {
