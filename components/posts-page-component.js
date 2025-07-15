@@ -71,9 +71,13 @@ export function renderPostsPageComponent({ appEl }) {
   // Добавляем обработчики событий для переходов к страницам пользователей
   for (let userEl of document.querySelectorAll(".post-header")) {
     userEl.addEventListener("click", () => {
-      goToPage(USER_POSTS_PAGE, {
-        userId: userEl.dataset.userId,
-      });
+      // Добавляем плавный переход
+      document.querySelector('.page-container').style.opacity = '0.7';
+      setTimeout(() => {
+        goToPage(USER_POSTS_PAGE, {
+          userId: userEl.dataset.userId,
+        });
+      }, 150);
     });
   }
 
@@ -83,6 +87,11 @@ export function renderPostsPageComponent({ appEl }) {
       event.stopPropagation(); // Предотвращаем всплытие события
 
       if (!user) {
+        // Анимация ошибки
+        likeButton.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          likeButton.style.animation = '';
+        }, 500);
         alert("Для лайка необходимо авторизоваться");
         return;
       }
@@ -94,6 +103,12 @@ export function renderPostsPageComponent({ appEl }) {
         console.error("Пост не найден");
         return;
       }
+
+      // Добавляем анимацию лайка
+      likeButton.classList.add('liked');
+      setTimeout(() => {
+        likeButton.classList.remove('liked');
+      }, 600);
 
       // Определяем, нужно ставить лайк или убирать
       const apiCall = currentPost.isLiked
@@ -170,12 +185,34 @@ export function renderPostsPageComponent({ appEl }) {
       ".post-likes-text strong"
     );
 
-    // Обновляем изображение лайка
-    likeImage.src = `./assets/images/like-${
-      updatedPost.isLiked ? "active" : "not-active"
-    }.svg`;
+    // Плавное обновление счетчика лайков
+    const currentCount = parseInt(likeText.textContent);
+    const newCount = updatedPost.likes.length;
+    
+    if (currentCount !== newCount) {
+      // Анимация изменения счетчика
+      likeText.style.transform = 'scale(1.2)';
+      likeText.style.color = '#565eef';
+      setTimeout(() => {
+        likeText.textContent = newCount;
+        likeText.style.transform = 'scale(1)';
+        likeText.style.color = '';
+      }, 150);
+    }
 
-    // Обновляем счетчик лайков
-    likeText.textContent = updatedPost.likes.length;
+    // Обновляем изображение лайка с плавным переходом
+    likeImage.style.opacity = '0.5';
+    setTimeout(() => {
+      likeImage.src = `./assets/images/like-${
+        updatedPost.isLiked ? "active" : "not-active"
+      }.svg`;
+      likeImage.style.opacity = '1';
+    }, 100);
   }
+
+  // Добавляем анимацию появления постов
+  const postElements = document.querySelectorAll('.post');
+  postElements.forEach((post, index) => {
+    post.style.animationDelay = `${index * 0.1}s`;
+  });
 }
