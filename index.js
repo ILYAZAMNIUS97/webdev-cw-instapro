@@ -16,15 +16,8 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 
-// Используем реальные данные полученные через консоль
-export let user = {
-  id: "ilya_zamnius_browser_1752325978096", // Используем логин как ID
-  name: "Илья",
-  login: "ilya_zamnius_browser_1752325978096",
-  token:
-    "boc0dgasakdkasc4c8bod0csakawcoccd8csb8coak5g645w5k5o5k5w6c64685c6c606gc4dgcgascscsd8cccob45g5k5o6g38g3cc3e83ek",
-  imageUrl: "https://avatars.githubusercontent.com/u/1?v=4",
-};
+// Инициализируем пользователя из localStorage или null
+export let user = getUserFromLocalStorage();
 
 export let page = null;
 export let posts = [];
@@ -63,7 +56,7 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
-      // Загружаем посты с токеном для показа лайков
+      // Загружаем посты с токеном для показа лайков (если пользователь авторизован)
       return getPosts({ token: getToken() })
         .then((newPosts) => {
           page = POSTS_PAGE;
@@ -184,4 +177,11 @@ const renderApp = () => {
   }
 };
 
-goToPage(POSTS_PAGE);
+// При инициализации приложения проверяем авторизацию и переходим на соответствующую страницу
+if (user) {
+  // Если пользователь авторизован, показываем ленту постов
+  goToPage(POSTS_PAGE);
+} else {
+  // Если пользователь не авторизован, показываем ленту постов (но без возможности лайкать)
+  goToPage(POSTS_PAGE);
+}

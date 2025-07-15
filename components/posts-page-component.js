@@ -24,7 +24,7 @@ export function renderPostsPageComponent({ appEl }) {
           <img class="post-image" src="${post.imageUrl}">
         </div>
         <div class="post-likes">
-          <button data-post-id="${post.id}" class="like-button">
+          <button data-post-id="${post.id}" class="like-button" ${!user ? 'disabled' : ''}>
             <img src="./assets/images/like-${
               post.isLiked ? "active" : "not-active"
             }.svg">
