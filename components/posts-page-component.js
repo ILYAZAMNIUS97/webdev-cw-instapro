@@ -14,10 +14,17 @@ export function renderPostsPageComponent({ appEl }) {
 
   // Функция для генерации HTML одного поста
   function renderPost(post) {
+    // Проверяем и исправляем URL аватара пользователя
+    let userImageUrl = post.user.imageUrl;
+    if (userImageUrl && (userImageUrl.includes('via.placeholder.com') || userImageUrl.includes('placeholder.com'))) {
+      // Заменяем неработающие URL на дефолтный аватар
+      userImageUrl = "https://avatars.githubusercontent.com/u/1?v=4";
+    }
+
     return `
       <li class="post">
         <div class="post-header" data-user-id="${post.user.id}">
-          <img src="${post.user.imageUrl}" class="post-header__user-image">
+          <img src="${userImageUrl}" class="post-header__user-image" onerror="this.src='https://avatars.githubusercontent.com/u/1?v=4'">
           <p class="post-header__user-name">${post.user.name}</p>
         </div>
         <div class="post-image-container">
