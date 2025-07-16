@@ -2,10 +2,15 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage, user } from "../index.js";
 import { likePost, dislikePost, getPosts, getUserPosts } from "../api.js";
+import { formatDistanceToNow } from "date-fns";
+import { ru } from "date-fns/locale";
+import likeActive from "../assets/images/like-active.svg";
+import likeNotActive from "../assets/images/like-not-active.svg";
 
 export function renderPostsPageComponent({ appEl }) {
   // @TODO: реализовать рендер постов из api
   console.log("Актуальный список постов:", posts);
+  console.log("Текущий пользователь:", user);
 
   /**
    * Функция для красивого форматирования даты
@@ -13,56 +18,31 @@ export function renderPostsPageComponent({ appEl }) {
    */
   function formatDate(date) {
     try {
-      // Проверяем, доступна ли библиотека date-fns
-      if (typeof window.dateFns !== 'undefined') {
-        return window.dateFns.formatDistanceToNow(new Date(date), {
-          addSuffix: true,
-          locale: {
-            formatDistance: (token, count) => {
-              const options = {
-                lessThanXSeconds: 'меньше {{count}} секунд',
-                xSeconds: '{{count}} секунд',
-                halfAMinute: 'полминуты',
-                lessThanXMinutes: 'меньше {{count}} минут',
-                xMinutes: '{{count}} минут',
-                aboutXHours: 'около {{count}} часов',
-                xHours: '{{count}} часов',
-                xDays: '{{count}} дней',
-                aboutXMonths: 'около {{count}} месяцев',
-                xMonths: '{{count}} месяцев',
-                aboutXYears: 'около {{count}} лет',
-                xYears: '{{count}} лет',
-                overXYears: 'более {{count}} лет',
-                almostXYears: 'почти {{count}} лет'
-              };
-              return options[token].replace('{{count}}', count);
-            }
-          }
-        });
-      } else {
-        // Fallback на собственную реализацию, если библиотека не загружена
-        const now = new Date();
-        const postDate = new Date(date);
-        const diffInMs = now - postDate;
-        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-        if (diffInMinutes < 1) return 'только что';
-        if (diffInMinutes < 60) return `${diffInMinutes} минут назад`;
-        if (diffInHours < 24) return `${diffInHours} часов назад`;
-        if (diffInDays < 7) return `${diffInDays} дней назад`;
-        
-        return postDate.toLocaleDateString("ru-RU", {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        });
-      }
+      // Используем импортированную библиотеку date-fns
+      return formatDistanceToNow(new Date(date), {
+        addSuffix: true,
+        locale: ru
+      });
     } catch (error) {
       console.warn('Ошибка форматирования даты:', error);
-      // Fallback на простое форматирование
-      return new Date(date).toLocaleDateString("ru-RU");
+      // Fallback на собственную реализацию
+      const now = new Date();
+      const postDate = new Date(date);
+      const diffInMs = now - postDate;
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+      if (diffInMinutes < 1) return 'только что';
+      if (diffInMinutes < 60) return `${diffInMinutes} минут назад`;
+      if (diffInHours < 24) return `${diffInHours} часов назад`;
+      if (diffInDays < 7) return `${diffInDays} дней назад`;
+      
+      return postDate.toLocaleDateString("ru-RU", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
     }
   }
 
@@ -86,10 +66,9 @@ export function renderPostsPageComponent({ appEl }) {
         </div>
         <div class="post-likes">
           <button data-post-id="${post.id}" class="like-button" ${!user ? 'disabled' : ''}>
-            <img src="./assets/images/like-${
-              post.isLiked ? "active" : "not-active"
-            }.svg">
+            <img src="${post.isLiked ? likeActive : likeNotActive}">
           </button>
+          ${!user ? '<p style="color: red; font-size: 12px;">Войдите для лайка</p>' : ''}
           <p class="post-likes-text">
             Нравится: <strong>${post.likes.length}</strong>
           </p>
@@ -136,9 +115,12 @@ export function renderPostsPageComponent({ appEl }) {
   }
 
   // Добавляем обработчики событий для лайков
+  console.log("Найдено кнопок лайков:", document.querySelectorAll(".like-button").length);
   for (let likeButton of document.querySelectorAll(".like-button")) {
+    console.log("Добавляем обработчик для кнопки:", likeButton.dataset.postId);
     likeButton.addEventListener("click", (event) => {
       event.stopPropagation(); // Предотвращаем всплытие события
+      console.log("Клик по лайку, пользователь:", user);
 
       if (!user) {
         // Анимация ошибки
@@ -257,9 +239,7 @@ export function renderPostsPageComponent({ appEl }) {
     // Обновляем изображение лайка с плавным переходом
     likeImage.style.opacity = '0.5';
     setTimeout(() => {
-      likeImage.src = `./assets/images/like-${
-        updatedPost.isLiked ? "active" : "not-active"
-      }.svg`;
+      likeImage.src = updatedPost.isLiked ? likeActive : likeNotActive;
       likeImage.style.opacity = '1';
     }, 100);
   }

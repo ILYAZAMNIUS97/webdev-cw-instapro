@@ -1,3 +1,5 @@
+import "./styles.css";
+import "./ui-kit.css";
 import { getPosts, addPost, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
