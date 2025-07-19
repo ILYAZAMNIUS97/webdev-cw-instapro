@@ -93,7 +93,6 @@ export function renderAuthPageComponent({ appEl, setUser }) {
         onImageUrlChange: (newImageUrl) => {
           // Возвращаем original название
           imageUrl = newImageUrl;
-          console.log("Изображение загружено:", imageUrl);
         },
       });
     }
@@ -117,15 +116,11 @@ export function renderAuthPageComponent({ appEl, setUser }) {
           return;
         }
 
-        console.log("Попытка входа с данными:", { login, password });
-
         loginUser({ login, password })
           .then((user) => {
-            console.log("Успешная авторизация:", user);
             setUser(user.user);
           })
           .catch((error) => {
-            console.warn("Ошибка авторизации:", error);
             setError(error.message);
           });
       } else {
@@ -154,20 +149,11 @@ export function renderAuthPageComponent({ appEl, setUser }) {
           return;
         }
 
-        console.log("Попытка регистрации с данными:", {
-          login,
-          password,
-          name,
-          imageUrl,
-        });
-
         registerUser({ login, password, name, imageUrl })
           .then((user) => {
-            console.log("Успешная регистрация:", user);
             setUser(user.user);
           })
           .catch((error) => {
-            console.warn("Ошибка регистрации:", error);
             setError(error.message);
           });
       }

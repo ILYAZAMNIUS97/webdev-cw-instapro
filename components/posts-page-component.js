@@ -9,8 +9,6 @@ import likeNotActive from "../assets/images/like-not-active.svg";
 
 export function renderPostsPageComponent({ appEl }) {
   // @TODO: реализовать рендер постов из api
-  console.log("Актуальный список постов:", posts);
-  console.log("Текущий пользователь:", user);
 
   /**
    * Функция для красивого форматирования даты
@@ -24,7 +22,6 @@ export function renderPostsPageComponent({ appEl }) {
         locale: ru
       });
     } catch (error) {
-      console.warn('Ошибка форматирования даты:', error);
       // Fallback на собственную реализацию
       const now = new Date();
       const postDate = new Date(date);
@@ -115,12 +112,9 @@ export function renderPostsPageComponent({ appEl }) {
   }
 
   // Добавляем обработчики событий для лайков
-  console.log("Найдено кнопок лайков:", document.querySelectorAll(".like-button").length);
   for (let likeButton of document.querySelectorAll(".like-button")) {
-    console.log("Добавляем обработчик для кнопки:", likeButton.dataset.postId);
     likeButton.addEventListener("click", (event) => {
       event.stopPropagation(); // Предотвращаем всплытие события
-      console.log("Клик по лайку, пользователь:", user);
 
       if (!user) {
         // Анимация ошибки
@@ -136,7 +130,6 @@ export function renderPostsPageComponent({ appEl }) {
       const currentPost = posts.find((post) => post.id === postId);
 
       if (!currentPost) {
-        console.error("Пост не найден");
         return;
       }
 
@@ -151,8 +144,6 @@ export function renderPostsPageComponent({ appEl }) {
         ? dislikePost({ postId, token: `Bearer ${user.token}` })
         : likePost({ postId, token: `Bearer ${user.token}` });
 
-      console.log("Отправляем запрос с токеном:", `Bearer ${user.token}`);
-
       // Отключаем кнопку на время запроса
       likeButton.disabled = true;
 
@@ -166,43 +157,9 @@ export function renderPostsPageComponent({ appEl }) {
 
           // Обновляем только этот конкретный пост на странице
           updatePostDisplay(updatedPost);
-
-          console.log(
-            "Лайк обновлен:",
-            updatedPost.isLiked ? "поставлен" : "убран"
-          );
         })
         .catch((error) => {
-          console.error("Ошибка при обновлении лайка:", error);
-
-          // Если ошибка авторизации - показываем имитацию работы
-          if (error.message === "Нет авторизации") {
-            console.log("Демонстрация функционала лайков (без реального API):");
-
-            // Имитируем успешный лайк локально
-            currentPost.isLiked = !currentPost.isLiked;
-
-            if (currentPost.isLiked) {
-              currentPost.likes.push({ id: user.id, name: user.name });
-            } else {
-              currentPost.likes = currentPost.likes.filter(
-                (like) => like.id !== user.id
-              );
-            }
-
-            // Обновляем отображение
-            updatePostDisplay(currentPost);
-
-            console.log(
-              "Лайк обновлен локально:",
-              currentPost.isLiked ? "поставлен" : "убран"
-            );
-            console.log(
-              "Примечание: С настоящим токеном это работало бы через API"
-            );
-          } else {
-            alert("Ошибка при обновлении лайка: " + error.message);
-          }
+          alert("Ошибка при обновлении лайка: " + error.message);
         })
         .finally(() => {
           // Включаем кнопку обратно

@@ -44,9 +44,6 @@ export function getUserPosts({ userId, token }) {
 
 // Новая функция для добавления поста
 export function addPost({ description, imageUrl, token }) {
-  console.log("Отправляем данные поста:", { description, imageUrl, token });
-  console.log("URL запроса:", postsHost);
-
   return fetch(postsHost, {
     method: "POST",
     headers: {
@@ -57,11 +54,8 @@ export function addPost({ description, imageUrl, token }) {
       imageUrl,
     }),
   }).then((response) => {
-    console.log("Ответ сервера:", response.status, response.statusText);
-
     // Всегда читаем ответ как текст, чтобы увидеть ошибку
     return response.text().then((text) => {
-      console.log("Полный ответ сервера:", text);
 
       if (response.status === 401) {
         throw new Error("Нет авторизации");
@@ -70,7 +64,6 @@ export function addPost({ description, imageUrl, token }) {
         throw new Error("Некорректные данные: " + text);
       }
       if (response.status === 201) {
-        console.log("Пост успешно добавлен!");
         try {
           return JSON.parse(text);
         } catch (e) {

@@ -44,7 +44,6 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
       element: document.querySelector(".upload-image-container"),
       onImageUrlChange: (newImageUrl) => {
         imageUrl = newImageUrl;
-        console.log("Изображение загружено:", imageUrl);
       },
     });
 

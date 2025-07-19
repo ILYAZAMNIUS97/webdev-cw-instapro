@@ -66,7 +66,6 @@ export const goToPage = (newPage, data) => {
           renderApp();
         })
         .catch((error) => {
-          console.error(error);
           // Если не удалось загрузить, используем prod API
           const prodKey = "prod";
           const prodUrl = `https://wedev-api.sky.pro/api/v1/${prodKey}/instapro`;
@@ -97,7 +96,6 @@ export const goToPage = (newPage, data) => {
           renderApp();
         })
         .catch((error) => {
-          console.error(error);
           page = USER_POSTS_PAGE;
           posts = [];
           renderApp();
@@ -150,13 +148,11 @@ const renderApp = () => {
           token: getToken(),
         })
           .then(() => {
-            console.log("Пост успешно добавлен!");
             // После успешного добавления переходим на главную страницу
             // Посты автоматически обновятся при переходе
             return goToPage(POSTS_PAGE);
           })
           .catch((error) => {
-            console.error("Ошибка при добавлении поста:", error);
             alert("Ошибка при добавлении поста: " + error.message);
             // Возвращаемся на страницу добавления поста
             page = ADD_POSTS_PAGE;

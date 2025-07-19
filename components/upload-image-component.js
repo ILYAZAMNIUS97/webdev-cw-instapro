@@ -82,7 +82,6 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
             labelEl.textContent = "Выберите фото";
           }, 500);
           
-          console.error("Ошибка загрузки изображения:", error);
           alert("Ошибка при загрузке изображения: " + error.message);
         });
       }
