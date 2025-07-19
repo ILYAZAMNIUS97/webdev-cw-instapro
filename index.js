@@ -1,3 +1,5 @@
+import "./styles.css";
+import "./ui-kit.css";
 import { getPosts, addPost, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
@@ -16,7 +18,9 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 
+// Инициализируем пользователя из localStorage или null
 export let user = getUserFromLocalStorage();
+
 export let page = null;
 export let posts = [];
 
@@ -54,6 +58,7 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
+      // Загружаем посты с токеном для показа лайков (если пользователь авторизован)
       return getPosts({ token: getToken() })
         .then((newPosts) => {
           page = POSTS_PAGE;
@@ -61,8 +66,22 @@ export const goToPage = (newPage, data) => {
           renderApp();
         })
         .catch((error) => {
-          console.error(error);
-          goToPage(POSTS_PAGE);
+          // Если не удалось загрузить, используем prod API
+          const prodKey = "prod";
+          const prodUrl = `https://wedev-api.sky.pro/api/v1/${prodKey}/instapro`;
+
+          return fetch(prodUrl)
+            .then((response) => response.json())
+            .then((data) => {
+              page = POSTS_PAGE;
+              posts = data.posts || [];
+              renderApp();
+            })
+            .catch(() => {
+              page = POSTS_PAGE;
+              posts = [];
+              renderApp();
+            });
         });
     }
 
@@ -77,8 +96,9 @@ export const goToPage = (newPage, data) => {
           renderApp();
         })
         .catch((error) => {
-          console.error(error);
-          goToPage(POSTS_PAGE);
+          page = USER_POSTS_PAGE;
+          posts = [];
+          renderApp();
         });
     }
 
@@ -128,13 +148,11 @@ const renderApp = () => {
           token: getToken(),
         })
           .then(() => {
-            console.log("Пост успешно добавлен!");
             // После успешного добавления переходим на главную страницу
             // Посты автоматически обновятся при переходе
-            goToPage(POSTS_PAGE);
+            return goToPage(POSTS_PAGE);
           })
           .catch((error) => {
-            console.error("Ошибка при добавлении поста:", error);
             alert("Ошибка при добавлении поста: " + error.message);
             // Возвращаемся на страницу добавления поста
             page = ADD_POSTS_PAGE;
@@ -157,4 +175,11 @@ const renderApp = () => {
   }
 };
 
-goToPage(POSTS_PAGE);
+// При инициализации приложения проверяем авторизацию и переходим на соответствующую страницу
+if (user) {
+  // Если пользователь авторизован, показываем ленту постов
+  goToPage(POSTS_PAGE);
+} else {
+  // Если пользователь не авторизован, показываем ленту постов (но без возможности лайкать)
+  goToPage(POSTS_PAGE);
+}

@@ -52,19 +52,39 @@ p {
   background-color: #565eef;
   color: #ffffff;
   border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.link-button {
-  display: inline;
-  border: 0;
-  padding: 0;
-  background: none;
-  color: #565eef;
-  cursor: pointer;
+.button::before,
+.secondary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.button:hover::before,
+.secondary-button:hover::before {
+  left: 100%;
 }
 
 .button:hover {
   background-color: #6d73ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(86, 94, 239, 0.3);
+}
+
+.button:active {
+  background-color: #4f56ce;
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(86, 94, 239, 0.3);
 }
 
 .button[disabled="true"],
@@ -72,10 +92,8 @@ p {
   background-color: #f4f5f6;
   color: rgba(153, 153, 153, 0.6);
   pointer-events: none;
-}
-
-.button:active {
-  background-color: #4f56ce;
+  transform: none;
+  box-shadow: none;
 }
 
 .secondary-button {
@@ -85,10 +103,44 @@ p {
 
 .secondary-button:hover {
   background-color: #f2eeff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(86, 94, 239, 0.2);
 }
 
 .secondary-button:active {
   background-color: #d8d7ff;
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(86, 94, 239, 0.2);
+}
+
+.link-button {
+  display: inline;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #565eef;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.link-button::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #565eef;
+  transition: width 0.2s ease;
+}
+
+.link-button:hover::after {
+  width: 100%;
+}
+
+.link-button:hover {
+  color: #6d73ff;
 }
 
 .input {
@@ -101,14 +153,18 @@ p {
   border: none;
   border-radius: 5px;
   background-color: #e8e8e8;
-}
-
-.input .-error {
-  background-color: #fff;
+  transition: all 0.2s ease;
 }
 
 .input:focus {
   background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(86, 94, 239, 0.2);
+  outline: none;
+}
+
+.input .-error {
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
 }
 
 .textarea {
@@ -116,6 +172,12 @@ p {
   resize: none;
   width: 100%;
   height: 100px;
+  transition: all 0.2s ease;
+}
+
+.textarea:focus {
+  box-shadow: 0 0 0 2px rgba(86, 94, 239, 0.2);
+  outline: none;
 }
 
 strong {
@@ -129,6 +191,7 @@ strong {
   width: 80px;
   height: 80px;
 }
+
 .loader div {
   display: inline-block;
   position: absolute;
@@ -137,18 +200,22 @@ strong {
   background: #000;
   animation: loader 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
+
 .loader div:nth-child(1) {
   left: 8px;
   animation-delay: -0.24s;
 }
+
 .loader div:nth-child(2) {
   left: 32px;
   animation-delay: -0.12s;
 }
+
 .loader div:nth-child(3) {
   left: 56px;
   animation-delay: 0;
 }
+
 @keyframes loader {
   0% {
     top: 8px;
@@ -158,5 +225,55 @@ strong {
   100% {
     top: 24px;
     height: 32px;
+  }
+}
+
+/* Дополнительные анимации для улучшения UX */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Анимация для успешных действий */
+.success-animation {
+  animation: pulse 0.6s ease-in-out;
+}
+
+/* Анимация для ошибок */
+.error-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
   }
 }

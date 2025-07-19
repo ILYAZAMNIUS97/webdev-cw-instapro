@@ -1,6 +1,6 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
-const personalKey = "student_zamnius_2025";
+const personalKey = "ilya-zamnius"; // Ваш персональный ключ согласно ТЗ
 const baseHost = "https://wedev-api.sky.pro"; // Обновленный URL согласно документации
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
@@ -47,21 +47,32 @@ export function addPost({ description, imageUrl, token }) {
   return fetch(postsHost, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token, // Токен уже содержит "Bearer "
     },
     body: JSON.stringify({
       description,
       imageUrl,
     }),
   }).then((response) => {
-    if (response.status === 401) {
-      throw new Error("Нет авторизации");
-    }
-    if (response.status === 400) {
-      throw new Error("Некорректные данные");
-    }
-    return response.json();
+    // Всегда читаем ответ как текст, чтобы увидеть ошибку
+    return response.text().then((text) => {
+
+      if (response.status === 401) {
+        throw new Error("Нет авторизации");
+      }
+      if (response.status === 400) {
+        throw new Error("Некорректные данные: " + text);
+      }
+      if (response.status === 201) {
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return { result: "ok" };
+        }
+      }
+
+      throw new Error("Неожиданный ответ: " + response.status + " " + text);
+    });
   });
 }
 
@@ -106,9 +117,6 @@ export function dislikePost({ postId, token }) {
 export function registerUser({ login, password, name, imageUrl }) {
   return fetch(baseHost + "/api/user", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       login,
       password,
@@ -126,9 +134,6 @@ export function registerUser({ login, password, name, imageUrl }) {
 export function loginUser({ login, password }) {
   return fetch(baseHost + "/api/user/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       login,
       password,

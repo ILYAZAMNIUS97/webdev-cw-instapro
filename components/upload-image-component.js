@@ -56,11 +56,33 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
         labelEl.setAttribute("disabled", true);
         labelEl.textContent = "Загружаю файл...";
         
+        // Добавляем анимацию загрузки
+        labelEl.classList.add('loading');
+        
         // Загружаем изображение с помощью API
         uploadImage({ file }).then(({ fileUrl }) => {
           imageUrl = fileUrl; // Сохраняем URL загруженного изображения
           onImageUrlChange(imageUrl); // Уведомляем о изменении URL изображения
+          
+          // Добавляем анимацию успеха
+          labelEl.classList.remove('loading');
+          labelEl.classList.add('success-animation');
+          setTimeout(() => {
+            labelEl.classList.remove('success-animation');
+          }, 600);
+          
           render(); // Перерисовываем компонент с новым состоянием
+        }).catch((error) => {
+          // Добавляем анимацию ошибки
+          labelEl.classList.remove('loading');
+          labelEl.classList.add('error-animation');
+          setTimeout(() => {
+            labelEl.classList.remove('error-animation');
+            labelEl.removeAttribute("disabled");
+            labelEl.textContent = "Выберите фото";
+          }, 500);
+          
+          alert("Ошибка при загрузке изображения: " + error.message);
         });
       }
     });
@@ -69,9 +91,15 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
     element
       .querySelector(".file-upload-remove-button")
       ?.addEventListener("click", () => {
-        imageUrl = ""; // Сбрасываем URL изображения
-        onImageUrlChange(imageUrl); // Уведомляем об изменении URL изображения
-        render(); // Перерисовываем компонент
+        // Добавляем анимацию удаления
+        const container = element.querySelector(".file-upload-image-container");
+        container.style.animation = 'fadeOut 0.3s ease-out';
+        
+        setTimeout(() => {
+          imageUrl = ""; // Сбрасываем URL изображения
+          onImageUrlChange(imageUrl); // Уведомляем об изменении URL изображения
+          render(); // Перерисовываем компонент
+        }, 300);
       });
   };
 

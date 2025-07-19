@@ -1,5 +1,17 @@
 .page-container {
   padding: 0 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {
@@ -10,6 +22,18 @@
   padding: 20px 16px;
   margin-left: -20px;
   margin-right: -20px;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .logo {
@@ -17,6 +41,12 @@
   font-size: 28px;
   cursor: pointer;
   width: 130px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  color: #565eef;
 }
 
 .header-container {
@@ -31,6 +61,29 @@
   line-height: 18px;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(86, 94, 239, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.header-button:hover::before {
+  left: 100%;
+}
+
+.header-button:hover {
+  transform: translateY(-1px);
+  color: #565eef;
 }
 
 .logout-button {
@@ -46,12 +99,38 @@
   margin: 0;
 }
 
+.post {
+  animation: slideInUp 0.5s ease-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .post-header {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.post-header:hover {
+  transform: scale(1.02);
 }
 
 .post-header__user-image {
@@ -60,6 +139,12 @@
   object-fit: cover;
   border-radius: 40px;
   margin-right: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-header:hover .post-header__user-image {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .post-image-container {
@@ -69,6 +154,12 @@
   display: flex;
   justify-content: center;
   background-color: #e0e0e0;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.post-image-container:hover {
+  transform: scale(1.02);
 }
 
 .post-image {
@@ -76,6 +167,15 @@
   height: 100%;
   max-width: 500px;
   object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.post-image:hover {
+  filter: brightness(1.05);
+}
+
+.post-image-container:hover .post-image {
+  transform: scale(1.05);
 }
 
 .post-likes {
@@ -91,6 +191,47 @@
   padding-left: 0px;
   padding-bottom: 5px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.like-button:not([disabled]):hover {
+  transform: scale(1.1);
+}
+
+.like-button:not([disabled]):active {
+  transform: scale(0.95);
+}
+
+.like-button img {
+  transition: transform 0.2s ease;
+}
+
+.like-button:not([disabled]):hover img {
+  transform: scale(1.2);
+}
+
+/* Анимация лайка при клике */
+.like-button.liked {
+  animation: likeAnimation 0.6s ease;
+}
+
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .user-name {
@@ -105,6 +246,34 @@
 
 .post-date {
   color: #8a8a8a;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.post-date:hover {
+  color: #565eef;
+  transform: scale(1.05);
+}
+
+/* Анимация для обновления дат в реальном времени */
+.post-date.updating {
+  animation: dateUpdate 0.3s ease-in-out;
+}
+
+@keyframes dateUpdate {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .post + .post {
@@ -116,6 +285,18 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 12px;
+  animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .posts-user-header__user-image {
@@ -124,29 +305,57 @@
   object-fit: cover;
   border-radius: 40px;
   margin-right: 10px;
+  transition: transform 0.2s ease;
+}
+
+.posts-user-header__user-image:hover {
+  transform: scale(1.1);
 }
 
 .posts-user-header__user-name {
   font-size: 28px;
   line-height: 35px;
+  transition: color 0.2s ease;
+}
+
+.posts-user-header:hover .posts-user-header__user-name {
+  color: #565eef;
 }
 
 .loading-page {
   display: flex;
   justify-content: center;
   margin-top: 100px;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .add-post-sign {
   background-image: url("data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 122.88 122.88'%3E%3Ctitle%3Eadd%3C/title%3E%3Cpath d='M61.44,0A61.46,61.46,0,1,1,18,18,61.25,61.25,0,0,1,61.44,0ZM88.6,56.82v9.24a4,4,0,0,1-4,4H70V84.62a4,4,0,0,1-4,4H56.82a4,4,0,0,1-4-4V70H38.26a4,4,0,0,1-4-4V56.82a4,4,0,0,1,4-4H52.84V38.26a4,4,0,0,1,4-4h9.24a4,4,0,0,1,4,4V52.84H84.62a4,4,0,0,1,4,4Zm8.83-31.37a50.92,50.92,0,1,0,14.9,36,50.78,50.78,0,0,0-14.9-36Z'/%3E%3C/svg%3E");
   height: 30px;
   width: 30px;
+  transition: transform 0.2s ease;
+}
+
+.add-post-sign:hover {
+  transform: scale(1.1) rotate(90deg);
 }
 
 .form {
   display: flex;
   flex-direction: column;
   width: 100%;
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-title {
@@ -163,6 +372,19 @@
 
 .form-error {
   color: red;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
 }
 
 .form-footer {
@@ -188,6 +410,11 @@
   margin-right: 10px;
   border: 1px solid gray;
   border-radius: 5px;
+  animation: fadeInScale 0.3s ease-out;
+}
+
+.file-upload-image:hover {
+  transform: scale(1.05);
 }
 
 .file-upload-label {
@@ -195,4 +422,204 @@
   box-sizing: border-box;
   width: 100%;
   text-align: center;
+  transition: all 0.2s ease;
+}
+
+.file-upload-label:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(86, 94, 239, 0.2);
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Smooth page transitions */
+.page-transition {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.page-transition.fade-out {
+  opacity: 0;
+}
+
+.page-transition.fade-in {
+  opacity: 1;
+}
+
+/* Анимации для загрузки изображений */
+.file-upload-label.loading {
+  background: linear-gradient(90deg, #edecff 25%, #d8d7ff 50%, #edecff 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Анимация появления изображения */
+.file-upload-image {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Улучшенные hover эффекты для кнопок */
+.file-upload-remove-button {
+  transition: all 0.2s ease;
+}
+
+.file-upload-remove-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(86, 94, 239, 0.3);
+}
+
+/* Анимация для счетчиков */
+.post-likes-text strong {
+  transition: all 0.2s ease;
+}
+
+/* Анимация для изображений постов */
+.post-image {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.post-image:hover {
+  filter: brightness(1.05);
+}
+
+/* Анимация для аватаров пользователей */
+.post-header__user-image {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-header:hover .post-header__user-image {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Анимация для заголовков постов */
+.post-header__user-name {
+  transition: color 0.2s ease;
+}
+
+.post-header:hover .post-header__user-name {
+  color: #565eef;
+}
+
+/* Анимация для кнопок лайков */
+.like-button:not([disabled]) {
+  transition: all 0.2s ease;
+}
+
+.like-button:not([disabled]):hover {
+  transform: scale(1.1);
+}
+
+.like-button:not([disabled]):active {
+  transform: scale(0.95);
+}
+
+/* Анимация для логотипа */
+.logo {
+  transition: all 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  color: #565eef;
+}
+
+/* Анимация для кнопок в заголовке */
+.header-button {
+  transition: all 0.2s ease;
+}
+
+.header-button:hover {
+  transform: translateY(-1px);
+  color: #565eef;
+}
+
+/* Анимация для форм */
+.form {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Анимация для ошибок */
+.form-error {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Анимация для успешных действий */
+.success-animation {
+  animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Анимация для ошибок */
+.error-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
 }
